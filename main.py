@@ -1,23 +1,21 @@
 import speech_recognition
 import pyttsx3
-import serial  # Thư viện giao tiếp Serial
+import serial 
 import time
 
 class VirtualAssistant:
     def __init__(self):
-        # Khởi tạo các đối tượng cho nhận diện giọng nói và phát âm
         self.robot_ear = speech_recognition.Recognizer()
         self.robot_mouth = pyttsx3.init()
         self.robot_brain = ""
 
-        # Biến trạng thái LED
         self.led_states = {"LED 1": False, "LED 2": False, "LED 3": False, "LED 4": False}
 
-        # Kết nối với Arduino
+
         try:
             self.arduino = serial.Serial('COM3', 9600, timeout=1)  # Thay 'COM3' bằng cổng kết nối Arduino
-            time.sleep(2)  # Chờ Arduino khởi động
-            print("Kết nối Arduino thành công!")
+            time.sleep(2)  
+
         except serial.SerialException:
             self.arduino = None
             print("Không thể kết nối với Arduino. Kiểm tra lại cổng kết nối.")
@@ -25,7 +23,6 @@ class VirtualAssistant:
     def listen_voice(self):
         while True:
             with speech_recognition.Microphone() as mic:
-                # Điều chỉnh theo tiếng ồn môi trường
                 self.robot_ear.adjust_for_ambient_noise(mic, duration=1)
                 print("Trợ lý ảo: I'm listening...")
 
@@ -44,7 +41,6 @@ class VirtualAssistant:
                     print("Lỗi: Không thể kết nối đến dịch vụ nhận diện.")
                     continue
 
-                # Xử lý lệnh giọng nói
                 self.handle_voice_command(you)
 
     def handle_voice_command(self, you):
@@ -83,7 +79,7 @@ class VirtualAssistant:
         else:
             self.robot_brain = "I can't hear you, please try again"
 
-        # Hiển thị trạng thái LED và nói
+
         self.update_status()
 
     def send_command_to_arduino(self, command):
